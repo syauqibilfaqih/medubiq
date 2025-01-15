@@ -64,20 +64,41 @@ mqtt_client.subscribe(topic)
 
 # Start the loop to process received messages
 # mqtt_client.loop_forever() # loop forever is blocking behaviour, lets use loop_start (starts new thread) 
+mqtt_client.loop_start()
 
 # Now Dash setup idfk if this works 
 app= dash.Dash(__name__)
 
-app.layout = html.Div([
+'''app.layout = html.Div([
     html.H1("Particle Acc and Force Sensor Data"),
     dcc.Graph(id='live-graph'), # animate=True),
 
     dcc.Interval(
         id='graph-update',
-        interval=500, # 500 ms per update -> increase when we increase fireing rate of particle 
+        interval=250, # 500 ms per update -> increase when we increase fireing rate of particle 
+        n_intervals=0)
+])'''
+
+app.layout = html.Div([
+    html.H1("Particle Acc and Force Sensor Data"),
+    html.Div([
+        dcc.Graph(id='live-graph'), 
+        html.Div([
+            html.Button('Feedback / Trigger Warning Light', id='action-button', n_clicks=0, style={ 
+                'width': '300px', # size of button
+                'height': '100px',
+                'margin-left': '20px'
+            })],
+          style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'})],
+          style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}),
+    
+    dcc.Interval(
+        id='graph-update',
+        interval=250,  # 500 ms per update
         n_intervals=0
     )
 ])
+
 
 @app.callback(
     Output('live-graph', 'figure'),
@@ -101,7 +122,7 @@ def update_graph_live(n):
             x=t,
             y=list(force_data),
             name='Force',
-            mode='lines+markers'
+            mode='lines'
             ), row=1, col=1)
     
     # ax data
@@ -109,7 +130,7 @@ def update_graph_live(n):
             x=t,
             y=list(ax_data),
             name='Ax',
-            mode='lines+markers'
+            mode='lines'
             ), row=2, col=1)
     
     # ay data
@@ -117,7 +138,7 @@ def update_graph_live(n):
             x=t,
             y=list(ay_data),
             name='Ay',
-            mode='lines+markers'
+            mode='lines'
             ), row=2, col=1)
     
     # az data
@@ -125,7 +146,7 @@ def update_graph_live(n):
             x=t,
             y=list(az_data),
             name='Az',
-            mode='lines+markers'
+            mode='lines'
             ), row=2, col=1)
     
     fig.update_yaxes(title_text="Force (N)", row=1, col=1)
