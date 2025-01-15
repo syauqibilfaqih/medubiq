@@ -3,6 +3,7 @@ import dash
 from dash import dcc, html 
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 from collections import deque
 from datetime import datetime
 import re 
@@ -92,41 +93,51 @@ def update_graph_live(n):
 
     t= list(time_data) # time data to list
 
-    trace_force = go.Scatter(
-        x=t,
-        y=list(force_data),
-        name='Force',
-        mode='lines+markers'
-    )
+    # subplot
+    fig = make_subplots(rows=2, cols=1, subplot_titles=("Force", "Vibration"))
 
-    trace_ax = go.Scatter(
-        x=t,
-        y=list(ax_data),
-        name='Ax',
-        mode='lines+markers' # markers maybe unnecessary
-    )
-    trace_ay = go.Scatter(
-        x=t,
-        y=list(ay_data),
-        name='Ay',
-        mode='lines+markers'
-    )
-    trace_az = go.Scatter(
-        x=t,
-        y=list(az_data),
-        name='Az',
-        mode='lines+markers'
-    )
-
-    layout = go.Layout(
-        title="real time",
-        xaxis=dict(title='Time'),
-        yaxis=dict(title='Force/Acc'),
-        hovermode='x unified'
-    )
+    # force sensor data
+    fig.append_trace(go.Scatter(
+            x=t,
+            y=list(force_data),
+            name='Force',
+            mode='lines+markers'
+            ), row=1, col=1)
     
-    fig = go.Figure(data=[trace_force, trace_ax, trace_ay, trace_az], 
-                    layout=layout)
+    # ax data
+    fig.append_trace(go.Scatter(
+            x=t,
+            y=list(ax_data),
+            name='Ax',
+            mode='lines+markers'
+            ), row=2, col=1)
+    
+    # ay data
+    fig.append_trace(go.Scatter(
+            x=t,
+            y=list(ay_data),
+            name='Ay',
+            mode='lines+markers'
+            ), row=2, col=1)
+    
+    # az data
+    fig.append_trace(go.Scatter(
+            x=t,
+            y=list(az_data),
+            name='Az',
+            mode='lines+markers'
+            ), row=2, col=1)
+    
+    fig.update_yaxes(title_text="Force (N)", row=1, col=1)
+    fig.update_yaxes(title_text="Vibration (m/s^2)", row=2, col=1)
+
+    fig.update_xaxes(title_text="Time (s)", row=1, col=1)
+    fig.update_xaxes(title_text="Time (s)", row=2, col=1)
+
+    fig.update_layout(height=600, width=600, title_text="Real Time Data Retrieval")
+    
+    # fig = go.Figure(data=[trace_force, trace_ax, trace_ay, trace_az], 
+    #                 layout=layout)
     return fig
 
 
