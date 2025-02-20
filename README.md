@@ -26,6 +26,6 @@ then click the IP address that will be shown on the terminal.
 For further information, please do not hesitate to contact us:
 - ali.bilfagih@santannapisa.it
 - akshayraj.shinde@santannapisa.it
-- lukas.jahnel@stud.uni-heidelberg.de 
+- lukas.jahnel@outlook.com
 
 
